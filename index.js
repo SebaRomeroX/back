@@ -11,12 +11,21 @@ const Post = require('./models/Post')
 const notFound = require('./middlewares/notFound.js')
 const handleErrors = require('./middlewares/handleErrors.js')
 
+//------------------------------------------------ CORS PARA RENDER 
 // app.use(cors())
 app.use(cors({
     origin: 'http://localhost:5173', // O '*' para permitir todas
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization']
   }));
+app.use((req, res, next) => {
+res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Asegúrate de poner la URL correcta
+res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+next();
+});
+
+
 
 app.use(express.json()) // parcea body para POST
 app.use(showRequest)
