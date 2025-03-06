@@ -8,7 +8,16 @@ const showRequest = require('./showRequest')
 
 const Post = require('./models/Post')
 
-app.use(cors())
+const notFound = require('./middlewares/notFound.js')
+const handleErrors = require('./middlewares/handleErrors.js')
+
+// app.use(cors())
+app.use(cors({
+    origin: 'http://localhost:5173', // O '*' para permitir todas
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+  }));
+
 app.use(express.json()) // parcea body para POST
 app.use(showRequest)
 
@@ -72,30 +81,15 @@ app.get('/api/posts/:id', (req, res, next) => {
         } else {
             res.status(404).end()
         }
-    }).catch(err => {
-        next(err)     
-    })
+    }).catch(err => next(err) )
 })
 
-//------------------- 404
 
-app.use((req, res) => {
-    res.status(404).json({
-        error:"Not found"
-    })
-})
 
 //----------------------- EROORES
 
-app.use((error, req, res, next) => {
-    console.error(error)
-    console.log(error.name)
-    if (error.name == 'CastError') {
-        res.status(400).end()
-    }else {
-        res.status(500).end()
-    }
-})
+app.use(notFound)
+app.use(handleErrors)
 
 //------------------------
 
